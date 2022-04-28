@@ -11,14 +11,14 @@ import pl.edu.pbs.csvjsonconverter.service.CsvToJsonService;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping(value = "/api/json", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/json", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 @RequiredArgsConstructor
 public class JsonController {
     private final CsvToJsonService csvToJsonService;
 
-    @GetMapping(path = "/small", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping("/small")
     public Flux<String> getAllProjects() {
-        Request request = new Request("src/main/resources/data/username.csv", Separator.SEMI_COLON, true);
+        Request request = new Request("small.csv", Separator.SEMI_COLON, false);
         return csvToJsonService.getJson(request);
     }
 }
