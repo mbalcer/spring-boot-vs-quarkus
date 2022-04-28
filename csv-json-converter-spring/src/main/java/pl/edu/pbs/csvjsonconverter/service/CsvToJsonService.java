@@ -3,6 +3,7 @@ package pl.edu.pbs.csvjsonconverter.service;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import pl.edu.pbs.csvjsonconverter.model.Request;
 import reactor.core.publisher.Flux;
 
 import java.util.stream.IntStream;
@@ -13,15 +14,15 @@ public class CsvToJsonService {
 
     private final FileService fileService;
 
-    public Flux<String> getJson(String path) {
-        Flux<String> file = fileService.readFile(path);
+    public Flux<String> getJson(Request request) {
+        Flux<String> file = fileService.readFile(request.getPath());
         String[] titles = file.next()
                 .share()
                 .block()
-                .split(";");
+                .split(request.getSeparator().getValue());
 
         return file
-                .map(line -> line.split(";"))
+                .map(line -> line.split(request.getSeparator().getValue()))
                 .map(values -> {
                     JSONObject object = new JSONObject();
                     IntStream.range(0, values.length)

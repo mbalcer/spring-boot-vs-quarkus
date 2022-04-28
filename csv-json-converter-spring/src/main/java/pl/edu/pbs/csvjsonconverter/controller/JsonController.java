@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.pbs.csvjsonconverter.model.Request;
+import pl.edu.pbs.csvjsonconverter.model.Separator;
 import pl.edu.pbs.csvjsonconverter.service.CsvToJsonService;
 import reactor.core.publisher.Flux;
 
@@ -16,6 +18,7 @@ public class JsonController {
 
     @GetMapping(path = "/small", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> getAllProjects() {
-        return csvToJsonService.getJson("src/main/resources/data/username.csv");
+        Request request = new Request("src/main/resources/data/username.csv", Separator.SEMI_COLON, true);
+        return csvToJsonService.getJson(request);
     }
 }
