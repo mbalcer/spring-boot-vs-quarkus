@@ -13,6 +13,7 @@ public class Request {
     private String path;
     private Separator separator;
     private boolean parseTypes;
+    private String[] titles;
 
     private static final String PATH_TO_DATA = "../data/";
 
