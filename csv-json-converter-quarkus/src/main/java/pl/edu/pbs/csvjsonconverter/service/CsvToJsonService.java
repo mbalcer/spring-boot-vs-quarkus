@@ -3,9 +3,9 @@ package pl.edu.pbs.csvjsonconverter.service;
 import io.smallrye.mutiny.Multi;
 import org.json.JSONObject;
 import pl.edu.pbs.csvjsonconverter.model.Request;
+import pl.edu.pbs.csvjsonconverter.util.TypesUtils;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.stream.IntStream;
 
 @ApplicationScoped
 public class CsvToJsonService {
@@ -34,11 +34,22 @@ public class CsvToJsonService {
                 .transform(values -> {
                     JSONObject jsonObject = new JSONObject();
 
-                    IntStream.range(0, values.length)
-                            .forEach(i -> {
-                                jsonObject.put(request.getTitles()[i], values[i]);
+                    Multi.createFrom().range(0, values.length)
+                            .subscribe()
+                            .with(i -> {
+                                String[] titles = request.getTitles();
+                                if (titles != null && titles[i].length() > 0) {
+                                    if (request.isParseTypes() && values[i].equals("null")) {
+                                        jsonObject.put(titles[i], JSONObject.NULL);
+                                    } else if (request.isParseTypes() && TypesUtils.isBoolean(values[i])) {
+                                        jsonObject.put(titles[i], Boolean.parseBoolean(values[i]));
+                                    } else if (request.isParseTypes() && TypesUtils.isNumeric(values[i])) {
+                                        jsonObject.put(titles[i], Double.parseDouble(values[i]));
+                                    } else {
+                                        jsonObject.put(titles[i], values[i]);
+                                    }
+                                }
                             });
-
                     return jsonObject;
                 })
                 .onItem()
