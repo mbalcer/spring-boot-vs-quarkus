@@ -5,10 +5,7 @@ import pl.edu.pbs.csvjsonconverter.model.Request;
 import pl.edu.pbs.csvjsonconverter.model.Separator;
 import pl.edu.pbs.csvjsonconverter.service.CsvToJsonService;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/api/json")
@@ -43,6 +40,7 @@ public class JsonController {
     }
 
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Multi<String> convertCsvToJson(Request request) {
         return csvToJsonService.convertCsvToJson(request);
     }
