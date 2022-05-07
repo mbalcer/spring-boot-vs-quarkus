@@ -6,10 +6,13 @@ import pl.edu.pbs.csvjsonconverter.model.Separator;
 import pl.edu.pbs.csvjsonconverter.service.CsvToJsonService;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Path("/api/json")
+@Produces(MediaType.SERVER_SENT_EVENTS)
 public class JsonController {
 
     private final CsvToJsonService csvToJsonService;
@@ -20,9 +23,27 @@ public class JsonController {
 
     @GET
     @Path("/small")
-    @Produces("text/event-stream")
     public Multi<String> getSmallJsonFile() {
         Request request = new Request(Separator.SEMI_COLON, false, "small.csv");
+        return csvToJsonService.convertCsvToJson(request);
+    }
+
+    @GET
+    @Path("/medium")
+    public Multi<String> getMediumJsonFile() {
+        Request request = new Request(Separator.SEMI_COLON, false, "medium.csv");
+        return csvToJsonService.convertCsvToJson(request);
+    }
+
+    @GET
+    @Path("/large")
+    public Multi<String> getLargeJsonFile() {
+        Request request = new Request(Separator.SEMI_COLON, false, "large.csv");
+        return csvToJsonService.convertCsvToJson(request);
+    }
+
+    @POST
+    public Multi<String> convertCsvToJson(Request request) {
         return csvToJsonService.convertCsvToJson(request);
     }
 }
