@@ -17,29 +17,31 @@ public class CsvToJsonService {
 
     public Flux<String> getJson(Request request) {
         Flux<String> file = fileService.readFile(request.getPath());
-        String[] titles = file.next()
-                .share()
-                .block()
-                .split(request.getSeparator().getValue());
+        file.next()
+                .map(line -> line.split(request.getSeparator().getValue()))
+                .subscribe(request::setTitles);
 
         return file
+                .skip(1)
                 .map(line -> line.split(request.getSeparator().getValue()))
                 .map(values -> {
                     JSONObject object = new JSONObject();
                     IntStream.range(0, values.length)
                             .forEach(i -> {
-                                if (request.isParseTypes() && values[i].equals("null")) {
-                                    object.put(titles[i], JSONObject.NULL);
-                                } else if (request.isParseTypes() && TypesUtils.isBoolean(values[i])) {
-                                    object.put(titles[i], Boolean.parseBoolean(values[i]));
-                                } else if (request.isParseTypes() && TypesUtils.isNumeric(values[i])) {
-                                    object.put(titles[i], Double.parseDouble(values[i]));
-                                } else {
-                                    object.put(titles[i], values[i]);
+                                String[] titles = request.getTitles();
+                                if (titles != null && titles[i].length() > 0) {
+                                    if (request.isParseTypes() && values[i].equals("null")) {
+                                        object.put(titles[i], JSONObject.NULL);
+                                    } else if (request.isParseTypes() && TypesUtils.isBoolean(values[i])) {
+                                        object.put(titles[i], Boolean.parseBoolean(values[i]));
+                                    } else if (request.isParseTypes() && TypesUtils.isNumeric(values[i])) {
+                                        object.put(titles[i], Double.parseDouble(values[i]));
+                                    } else {
+                                        object.put(titles[i], values[i]);
+                                    }
                                 }
                             });
-                    return object;
-                })
-                .map(JSONObject::toString);
+                    return object.toString();
+                });
     }
 }
