@@ -23,7 +23,6 @@ public class DataGenerator {
                 .limit(columns)
                 .collect(Collectors.toList());
 
-
         List<String> d = IntStream.range(0, rows)
                 .mapToObj(i -> titles.stream()
                         .map(title -> {

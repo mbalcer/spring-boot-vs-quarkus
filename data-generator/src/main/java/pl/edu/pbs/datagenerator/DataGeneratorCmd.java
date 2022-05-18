@@ -2,6 +2,7 @@ package pl.edu.pbs.datagenerator;
 
 import picocli.CommandLine;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @CommandLine.Command(name = "dg", mixinStandardHelpOptions = true)
@@ -21,11 +22,14 @@ public class DataGeneratorCmd implements Runnable {
     @Override
     public void run() {
         if (!separator.equals(";") && !separator.equals("\t") && !separator.equals(",")) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Unknown separator. Available separator: semi colon(;), comma(,) and tab(\\t)");
         }
 
         DataGenerator dataGenerator = new DataGenerator();
         List<String> data = dataGenerator.generate(rows, columns, separator);
+
+        FileService fileService = new FileService();
+        fileService.saveFile(Path.of(outputPath), data);
 
         data.forEach(System.out::println);
     }
