@@ -32,6 +32,12 @@ public class DataGeneratorCmd implements Runnable {
         if (!separator.equals(";") && !separator.equals("\t") && !separator.equals(",")) {
             throw new IllegalArgumentException("Unknown separator. Available separator: semi colon(;), comma(,) and tab(\\t)");
         }
+        if (columns < 1 || columns > 15) {
+            throw new IllegalArgumentException("The columns option must be in the range 1 to 15.");
+        }
+        if (rows < 1) {
+            throw new IllegalArgumentException("The rows option must be greater than 0.");
+        }
 
         DataGenerator dataGenerator = new DataGenerator();
         List<String> data = dataGenerator.generate(rows, columns, separator);
