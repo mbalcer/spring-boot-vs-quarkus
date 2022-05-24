@@ -1,6 +1,5 @@
 package pl.edu.pbs.csvjsonconverter.service;
 
-import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.csvjsonconverter.model.Request;
@@ -8,10 +7,12 @@ import pl.edu.pbs.csvjsonconverter.util.TypesUtils;
 import reactor.core.publisher.Flux;
 
 @Service
-@RequiredArgsConstructor
 public class CsvToJsonService {
-
     private final FileService fileService;
+
+    public CsvToJsonService(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     public Flux<String> getJson(Request request) {
         Flux<String> file = fileService.readFile(request.getPath());

@@ -1,6 +1,5 @@
 package pl.edu.pbs.csvjsonconverter.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.csvjsonconverter.model.Request;
@@ -10,9 +9,13 @@ import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping(value = "/api/json", produces = MediaType.APPLICATION_NDJSON_VALUE)
-@RequiredArgsConstructor
 public class JsonController {
+
     private final CsvToJsonService csvToJsonService;
+
+    public JsonController(CsvToJsonService csvToJsonService) {
+        this.csvToJsonService = csvToJsonService;
+    }
 
     @GetMapping("/small")
     public Flux<String> getSmallJsonFile() {
