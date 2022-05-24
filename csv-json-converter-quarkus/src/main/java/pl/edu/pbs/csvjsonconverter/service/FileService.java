@@ -1,16 +1,25 @@
 package pl.edu.pbs.csvjsonconverter.service;
 
 import io.smallrye.mutiny.Multi;
-import org.javaync.io.AsyncFiles;
+import io.vertx.mutiny.core.Vertx;
+import io.vertx.mutiny.core.buffer.Buffer;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.nio.file.Path;
 
 @ApplicationScoped
 public class FileService {
+    private Vertx vertx;
 
-    public Multi<String> readFile(String path) {
-        return Multi.createFrom().publisher(AsyncFiles.lines(Path.of(path).toAbsolutePath()));
+    public FileService() {
+        vertx = Vertx.vertx();
     }
 
+    public Multi<String> readFile(String path) {
+        return vertx.fileSystem()
+                .readFile(path)
+                .map(Buffer::toString)
+                .map(content -> content.split("\n"))
+                .onItem()
+                .transformToMulti(content -> Multi.createFrom().items(content));
+    }
 }

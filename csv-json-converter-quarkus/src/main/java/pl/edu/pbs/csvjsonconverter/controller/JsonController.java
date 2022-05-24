@@ -9,7 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/api/json")
-@Produces(MediaType.SERVER_SENT_EVENTS)
+@Produces("application/x-ndjson")
 public class JsonController {
 
     private final CsvToJsonService csvToJsonService;
@@ -21,7 +21,7 @@ public class JsonController {
     @GET
     @Path("/small")
     public Multi<String> getSmallJsonFile() {
-        Request request = new Request(Separator.SEMI_COLON, false, "small.csv");
+        Request request = new Request(Separator.COMMA, false, "small.csv");
         return csvToJsonService.convertCsvToJson(request);
     }
 
