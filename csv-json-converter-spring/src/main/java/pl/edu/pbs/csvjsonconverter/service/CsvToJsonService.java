@@ -7,8 +7,6 @@ import pl.edu.pbs.csvjsonconverter.model.Request;
 import pl.edu.pbs.csvjsonconverter.util.TypesUtils;
 import reactor.core.publisher.Flux;
 
-import java.util.stream.IntStream;
-
 @Service
 @RequiredArgsConstructor
 public class CsvToJsonService {
@@ -26,8 +24,8 @@ public class CsvToJsonService {
                 .map(line -> line.split(request.getSeparator().getValue()))
                 .map(values -> {
                     JSONObject object = new JSONObject();
-                    IntStream.range(0, values.length)
-                            .forEach(i -> {
+                    Flux.range(0, values.length)
+                            .subscribe(i -> {
                                 String[] titles = request.getTitles();
                                 if (titles != null && titles[i].length() > 0) {
                                     if (request.isParseTypes() && values[i].equals("null")) {
