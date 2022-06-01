@@ -33,7 +33,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-    &quot;path&quot;: &quot;~/data/medium.csv&quot;,&#xd;
+    &quot;path&quot;: &quot;../../data/medium.csv&quot;,&#xd;
     &quot;separator&quot;: &quot;;&quot;,&#xd;
     &quot;parseTypes&quot;: false&#xd;
 }&#xd;
