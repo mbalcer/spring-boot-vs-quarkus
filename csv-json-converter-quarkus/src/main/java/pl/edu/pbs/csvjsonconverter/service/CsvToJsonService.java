@@ -1,12 +1,14 @@
 package pl.edu.pbs.csvjsonconverter.service;
 
 import io.smallrye.mutiny.Uni;
+import org.json.JSONObject;
 import pl.edu.pbs.csvjsonconverter.model.Request;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @ApplicationScoped
 public class CsvToJsonService {
@@ -19,6 +21,13 @@ public class CsvToJsonService {
 
     public Uni<List<String>> convertCsvToJson(Request request) {
         return fileService.readFile(request.getPath())
-                .map(lines -> Arrays.stream(lines).collect(Collectors.toList()));
+                .map(lines -> Arrays.stream(lines).map(line -> {
+                    String[] split = line.split(request.getSeparator().getValue());
+                    JSONObject jsonObject = new JSONObject();
+                    IntStream.range(0, split.length)
+                            .forEach(i -> jsonObject.put("title"+i, split[i]));
+
+                    return jsonObject.toString();
+                }).collect(Collectors.toList()));
     }
 }
