@@ -9,7 +9,6 @@ import pl.edu.pbs.csvjsonconverter.util.TypesUtils;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @ApplicationScoped
 public class CsvToJsonService {
@@ -21,16 +20,16 @@ public class CsvToJsonService {
     }
 
     public Multi<String> convertCsvToJson(Request request) {
-        Supplier<Multi<String>> file = () -> fileService.readFile(request.getPath());
-        
-        file.get().select()
+        Multi<String> file = fileService.readFile(request.getPath());
+
+        file.select()
                 .first()
                 .onItem()
                 .transform(line -> line.split(request.getSeparator().getValue()))
                 .subscribe()
                 .with(request::setTitles);
 
-        return file.get().skip()
+        return file.skip()
                 .first()
                 .onItem()
                 .transform(line -> line.split(request.getSeparator().getValue()))
