@@ -5,9 +5,8 @@ import org.json.JSONObject;
 import pl.edu.pbs.csvjsonconverter.model.Request;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CsvToJsonService {
@@ -21,20 +20,26 @@ public class CsvToJsonService {
     public Uni<List<String>> convertCsvToJson(Request request) {
         Uni<String[]> file = fileService.readFile(request.getPath());
 
-        file.map(lines -> lines[0])
-                .map(line -> line.split(request.getSeparator().getValue()))
+        file.onItem()
+                .transform(lines -> lines[0])
+                .onItem()
+                .transform(line -> line.split(request.getSeparator().getValue()))
                 .subscribe()
                 .with(request::setTitles);
 
-        return file.map(lines -> Arrays.stream(lines)
-                .map(line -> line.split(request.getSeparator().getValue()))
-                .map(values -> {
-                    JSONObject jsonObject = new JSONObject();
-                    for (int i = 0; i < values.length; i++) {
-                        jsonObject.put(request.getTitles()[i], values[i]);
+        return file.onItem()
+                .transform(lines -> {
+                    List<String> json = new ArrayList<>();
+                    for (int i = 0; i < lines.length; i++) {
+                        String[] split = lines[i].split(request.getSeparator().getValue());
+                        JSONObject jsonObject = new JSONObject();
+                        for (int j = 0; j < split.length; j++) {
+                            jsonObject.put(request.getTitles()[j], split[j]);
+                        }
+                        json.add(jsonObject.toString());
                     }
-                    return jsonObject.toString();
-                })
-                .collect(Collectors.toList()));
+
+                    return json;
+                });
     }
 }
