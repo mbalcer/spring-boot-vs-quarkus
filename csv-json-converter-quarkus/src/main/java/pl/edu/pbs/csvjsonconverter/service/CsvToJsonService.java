@@ -23,9 +23,12 @@ public class CsvToJsonService {
         return fileService.readFile(request.getPath())
                 .map(lines -> Arrays.stream(lines).map(line -> {
                     String[] split = line.split(request.getSeparator().getValue());
-                    JSONObject jsonObject = new JSONObject();
+
+                    StringBuilder jsonObject = new StringBuilder("{");
                     IntStream.range(0, split.length)
-                            .forEach(i -> jsonObject.put("title"+i, split[i]));
+                            .forEach(i -> jsonObject.append("title" + i + ": " + split[i] + ",\n"));
+
+                    jsonObject.append("}");
 
                     return jsonObject.toString();
                 }).collect(Collectors.toList()));
