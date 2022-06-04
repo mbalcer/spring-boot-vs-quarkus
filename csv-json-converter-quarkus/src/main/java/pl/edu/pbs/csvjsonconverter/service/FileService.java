@@ -1,23 +1,22 @@
 package pl.edu.pbs.csvjsonconverter.service;
 
-import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.core.Vertx;
-import io.vertx.mutiny.core.buffer.Buffer;
+import io.smallrye.mutiny.Multi;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @ApplicationScoped
 public class FileService {
-    private Vertx vertx;
-
-    public FileService() {
-        vertx = Vertx.vertx();
-    }
-
-    public Uni<String[]> readFile(String path) {
-        return vertx.fileSystem()
-                .readFile(path)
-                .map(Buffer::toString)
-                .map(content -> content.split("\n"));
+    public Multi<String> readFile(String path) {
+        Multi<String> file = null;
+        try {
+            file = Multi.createFrom().items(
+                    Files.lines(Path.of(path)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }
